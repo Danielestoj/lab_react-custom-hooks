@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import axios from 'axios';
 
 
-function useFetch(url){
+export default function useFetch(url){
     const [data, useData] = useState(null);
     const [loading, useLoading] = useState(true);
     const [error, useError] = useState(null);
 
     useEffect( () => {
+        const controller = new AbortController();
+        const signal = controller.signal;
         const fetchedData = async () => {
 
             try {
@@ -21,13 +23,14 @@ function useFetch(url){
             }
 
         };
+        fetchedData();
+        return() => {
+            controller.abort();
+        };
 
     }, [url]);
-
-    fetchedData();
 
     return [data, loading, error];
 
 }
 
-export default useFetch;
